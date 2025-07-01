@@ -1,0 +1,5 @@
+robosuite
+mujoco-py
+numpy
+scipy
+imageio
