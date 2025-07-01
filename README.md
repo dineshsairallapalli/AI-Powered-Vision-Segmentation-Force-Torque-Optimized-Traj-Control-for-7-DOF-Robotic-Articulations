@@ -30,7 +30,7 @@ Together, these components enable the robot to autonomously detect, grasp, and p
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/ai-visionseg-7dof-forcetraj.git
+   git clone https://github.com/dineshsairallapalli/ai-visionseg-7dof-forcetraj.git
    cd ai-visionseg-7dof-forcetraj
    ```
 
