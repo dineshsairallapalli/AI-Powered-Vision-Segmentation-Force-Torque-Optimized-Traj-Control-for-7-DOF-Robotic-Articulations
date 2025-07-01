@@ -13,7 +13,7 @@ An end-to-end framework that enables a 7-DOF robotic arm to accurately grasp and
 Modern robotic manipulation demands both perceptual intelligence and precise control. This pipeline integrates three core principles:
 
 1. **Vision-Based Segmentation**
-   A camera mounted on the manipulator captures RGB and segmentation observations. We leverage Robosuite’s built-in segmentation (either element‑ or instance‑level) so that each distinct part of the scene—most importantly, the door handle—can be extracted as a binary mask. By processing that mask in each frame, the system pinpoints the handle’s pixel coordinates and converts them into a 3D position for grasp planning.
+   A camera mounted on the manipulator captures RGB and segmentation observations. We leverage Robosuite’s built-in segmentation (either element‑ or instance‑level) so that each distinct part of the scene, most importantly the door handle, can be extracted as a binary mask. By processing that mask in each frame, the system pinpoints the handle’s pixel coordinates and converts them into a 3D position for grasp planning.
 
 2. **Force–Torque Feedback**
    A six‑axis force–torque sensor at the wrist continuously measures the contact wrench (force vector **F** and torque vector **T**). Reading these values each control step allows the robot to detect collisions or excessive strain on the gripper, triggering recovery behaviors if thresholds are exceeded. This sensory feedback ensures both the safety of the mechanism and the integrity of the object.
