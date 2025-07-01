@@ -1,22 +1,7 @@
 # AI-Powered-Vision-Segmentation-Force-Torque-Optimized-Traj-Control-for-7-DOF-Robotic-Articulations
-# AI-Powered Vision Segmentation & Force-Torque Optimized Traj Control for 7-DOF Robotic Articulations
 
 An end-to-end pipeline integrating AI-driven vision segmentation with force–torque–optimized model-predictive control to perform precise object articulation on a 7-DOF robotic manipulator.
 
-## Repository Structure
-
-```
-.
-├── README.md            # This file
-├── requirements.txt     # Python dependencies
-├── .gitignore           # Files/folders to ignore
-├── mujoco_5.py          # Main control script fileciteturn0file0
-├── segmentations/       # Auto-generated segmentation masks
-│   ├── seg_0000.png     # Example mask at frame 0
-│   ├── seg_0001.png     # Example mask at frame 1
-│   └── ...
-└── scripts/             # Utility launch scripts
-    └── run.sh           # Convenience runner
 ```
 
 ## Environment Setup & Installation
