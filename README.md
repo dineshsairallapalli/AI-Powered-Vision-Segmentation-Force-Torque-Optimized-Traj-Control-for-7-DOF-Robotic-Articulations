@@ -1,35 +1,34 @@
 # AI-Powered-Vision-Segmentation-Force-Torque-Optimized-Traj-Control-for-7-DOF-Robotic-Articulations
-End-to-end pipeline integrating AI-powered vision segmentation with force-torque optimized model-predictive control for precise object articulation on a 7-DOF manipulator. Features include instance/element-level segmentation, real-time wrench sensing, MPC trajectory sampling, Robosuite/MuJoCo deployment, and comprehensive logging.
-**Project Overview**
+# AI-Powered Vision Segmentation & Force-Torque Optimized Traj Control for 7-DOF Robotic Articulations
 
-This repository contains a full-stack implementation of a robotic door manipulation pipeline using Robosuite, leveraging camera-based segmentation, force–torque sensing, and a custom model-predictive controller (MPC). The core script, `mujoco_5.py`, automates handle detection, grasping, and door-pulling actions, recording segmentation masks and printing force/torque trajectories.
+An end-to-end pipeline integrating AI-driven vision segmentation with force–torque–optimized model-predictive control to perform precise object articulation on a 7-DOF robotic manipulator.
 
-**Repository Structure**
+## Repository Structure
 
 ```
-└── door_manipulation/
-    ├── README.md            # This file
-    ├── requirements.txt     # Python dependencies
-    ├── .gitignore           # Files/folders to ignore
-    ├── mujoco_5.py          # Main control scriptfileciteturn0file0
-    ├── segmentations/       # Auto‑generated segmentation masks
-    │   ├── seg_0000.png      
-    │   ├── seg_0001.png      
-    │   └── ...               
-    └── scripts/             # Utility launch scripts
-        └── run.sh            # Convenience runner
+.
+├── README.md            # This file
+├── requirements.txt     # Python dependencies
+├── .gitignore           # Files/folders to ignore
+├── mujoco_5.py          # Main control script fileciteturn0file0
+├── segmentations/       # Auto-generated segmentation masks
+│   ├── seg_0000.png     # Example mask at frame 0
+│   ├── seg_0001.png     # Example mask at frame 1
+│   └── ...
+└── scripts/             # Utility launch scripts
+    └── run.sh           # Convenience runner
 ```
 
-**Environment Setup & Installation**
+## Environment Setup & Installation
 
-1. **Clone the repo**
+1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/door_manipulation.git
-   cd door_manipulation
+   git clone https://github.com/yourusername/ai-visionseg-7dof-forcetraj.git
+   cd ai-visionseg-7dof-forcetraj
    ```
 
-2. **Create a virtual environment** (Python ≥ 3.8 recommended)
+2. **Create and activate a Python virtual environment** (Python ≥3.8):
 
    ```bash
    python3 -m venv venv
@@ -44,9 +43,9 @@ This repository contains a full-stack implementation of a robotic door manipulat
    pip install -r requirements.txt
    ```
 
-4. **MuJoCo Installation**
+4. **MuJoCo Setup**
 
-   * Obtain a MuJoCo license and install MuJoCo (e.g., v2.3.4).
+   * Download and install MuJoCo (e.g., 2.3.4) and place in `$HOME/.mujoco/mujoco210`.
    * Set environment variables:
 
      ```bash
@@ -54,23 +53,23 @@ This repository contains a full-stack implementation of a robotic door manipulat
      export LD_LIBRARY_PATH=$MUJOCO_HOME/bin:$LD_LIBRARY_PATH
      ```
 
-5. **Render drivers**
+5. **Rendering Drivers**
 
-   * Ensure OpenGL/GLFW is installed for on-screen rendering. On Ubuntu:
+   * On Ubuntu, install OpenGL/GLFW for on-screen rendering:
 
      ```bash
      sudo apt-get install libglfw3 libglfw3-dev libglew-dev
      ```
 
-**Running Locally**
+## Running Locally
 
-A convenience script is provided:
+Use the helper script:
 
 ```bash
 bash scripts/run.sh --env-name Door --robot Panda --seg-level instance --max-steps 2000
 ```
 
-Or invoke directly:
+Or run directly:
 
 ```bash
 python mujoco_5.py \
@@ -82,57 +81,44 @@ python mujoco_5.py \
   --max-steps 2000
 ```
 
-* **Segmentation masks** will be saved under `segmentations/` until the handle is detected and throughout the pull sequence.
-* Console logs include hinge angle and force/torque norms every 150 steps.
+* Segmentation masks are saved to `./segmentations/seg_{frame:04d}.png` until handle detection and through the pull sequence.
+* Console logs report hinge angle and force/torque norms every 150 steps for analysis.
 
-**Key Components & Design**
+## Key Components
 
 1. **Data Classes**
 
-   * `ForceTorqueLimits`: Soft/hard thresholds for force spikes and torque limits.
-   * `CostConfig`: Weights for position, orientation, hinge, force, torque, and hard penalties.
-   * `ControlConfig`: Gains and parameters for servoing, grasp levels, MPC horizon/samples, noise scale, and recovery back‑off.
+   * `ForceTorqueLimits`: Defines soft/hard thresholds for force and torque.
+   * `CostConfig`: Weights for orientation, hinge, force, torque, and penalties.
+   * `ControlConfig`: Gains, MPC horizon/samples, and backoff parameters.
 
-2. **Segmentation-Based Handle Detection**
+2. **Vision Segmentation**
 
-   * The script uses Robosuite’s camera obs with `camera_segmentations` set to `element` or `instance`.
-   * Frame-by-frame random motions generate segmentation masks until the handle PX index is detected:
+   * Uses Robosuite camera obs with segmentation at `element` or `instance` level.
+   * Masks are written via:
 
      ```python
      seg = obs[f"{args.camera}_segmentation_{args.seg_level}"].squeeze(-1)
      imageio.imwrite(f"segmentations/seg_{frame:04d}.png", seg.astype(np.uint8))
      ```
 
-3. **Force–Torque Sensing**
+3. **Force–Torque Sensing & Logging**
 
-   * Wrench data read each step via `read_wrench(env)`, returning force & torque vectors.
-   * Magnitudes drive contact detection and spike recovery loops.
-
-4. **Model-Predictive Control (MPC) Loop**
-
-   * On each call to `controller.act(obs)`, the code:
-
-     * Computes distance & orientation mismatch to handle.
-     * If out of grasp range → servo with proportional gains.
-     * Once near, samples `mpc_samples` action sequences over `mpc_horizon`.
-     * Simulates in a snapshot to evaluate force cost, picking the sequence minimizing force norm.
-   * Recovery: If force exceeds `f_hard` or spike > `f_soft`, the controller backs off before retrying.
-
-5. **Force & Torque Trajectory Logging**
-
-   * Every 150 steps:
+   * Reads wrench data at each step: force & torque vectors.
+   * Logs every 150 steps:
 
      ```python
-     f_val, t_val = read_wrench(env)
-     print(f"Step {i:5d} | Hinge {obs['hinge_qpos']:+.3f} | |F|{np.linalg.norm(f_val):.1f}N | |T|{np.linalg.norm(t_val):.1f}Nm")
+     f, t = read_wrench(env)
+     print(f"Step {i} | Hinge {obs['hinge_qpos']:+.3f} | |F|{np.linalg.norm(f):.1f}N | |T|{np.linalg.norm(t):.1f}Nm")
      ```
-   * Use this output to visualize contact dynamics or tune thresholds.
 
-**Sample Segmentations**
+4. **MPC-Based Control Loop**
 
-Browse `segmentations/` to see grayscale (element) or colored (instance) masks. The handle appears as pixel index `HANDLE_PX` (printed at detection frame).
+   * Proportional servoing to align gripper with handle.
+   * Samples action sequences over `mpc_horizon`, evaluates via snapshot simulation, selects minimal force norm.
+   * Recovery logic backs off on force/torque spikes before retrying.
 
-**Creating Additional Files**
+## Additional Files
 
 * **requirements.txt**
 
@@ -150,7 +136,7 @@ Browse `segmentations/` to see grayscale (element) or colored (instance) masks. 
   __pycache__/
   *.pyc
   venv/
-  *.log
+  segmentations/*.png
   ```
 
 * **scripts/run.sh**
@@ -161,12 +147,12 @@ Browse `segmentations/` to see grayscale (element) or colored (instance) masks. 
   python mujoco_5.py "$@"
   ```
 
-**Next Steps & Customization**
+## Next Steps
 
-* Tune `ControlConfig` gains and MPC settings for different door materials or geometries.
-* Extend to multi-handle or bi‑manipulator scenarios.
-* Record and plot force/torque trajectories using external tools (e.g., Pandas + Matplotlib).
+* Tune `ControlConfig` gains and MPC parameters for varied door geometries.
+* Extend to multi-handle or bi-manipulator scenarios.
+* Post-process logs to plot force/torque trajectories using Pandas + Matplotlib.
 
 ---
 
-Feel free to raise issues or contribute via pull requests!
+Contributions and issues are welcome—feel free to open a PR or issue on GitHub!
