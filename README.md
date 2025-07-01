@@ -13,22 +13,14 @@ An end-to-end pipeline integrating AI-driven vision segmentation with force–to
    cd ai-visionseg-7dof-forcetraj
    ```
 
-2. **Create and activate a Python virtual environment** (Python ≥3.8):
-
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate       # Linux/macOS
-   venv\\Scripts\\activate.bat  # Windows
-   ```
-
-3. **Install dependencies**
+2. **Install dependencies**
 
    ```bash
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-4. **MuJoCo Setup**
+3. **MuJoCo Setup**
 
    * Download and install MuJoCo (e.g., 2.3.4) and place in `$HOME/.mujoco/mujoco210`.
    * Set environment variables:
@@ -38,7 +30,7 @@ An end-to-end pipeline integrating AI-driven vision segmentation with force–to
      export LD_LIBRARY_PATH=$MUJOCO_HOME/bin:$LD_LIBRARY_PATH
      ```
 
-5. **Rendering Drivers**
+4. **Rendering Drivers**
 
    * On Ubuntu, install OpenGL/GLFW for on-screen rendering:
 
