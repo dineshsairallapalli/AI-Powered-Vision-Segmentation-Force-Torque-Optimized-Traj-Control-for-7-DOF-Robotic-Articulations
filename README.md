@@ -1,0 +1,2 @@
+# AI-Powered-Vision-Segmentation-Force-Torque-Optimized-Traj-Control-for-7-DOF-Robotic-Articulations
+End-to-end pipeline integrating AI-powered vision segmentation with force-torque optimized model-predictive control for precise object articulation on a 7-DOF manipulator. Features include instance/element-level segmentation, real-time wrench sensing, MPC trajectory sampling, Robosuite/MuJoCo deployment, and comprehensive logging.
