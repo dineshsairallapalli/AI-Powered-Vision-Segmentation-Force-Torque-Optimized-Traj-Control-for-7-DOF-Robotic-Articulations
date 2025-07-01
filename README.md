@@ -1,4 +1,4 @@
-# AI-Powered Vision Segmentation & Force-Torque Optimized Traj Control for 7-DOF Robotic Articulations
+# AI-Powered Vision Segmentation & Force-Torque Optimized Trajectory Control for 7-DOF Robotic Articulations
 
 An end-to-end framework that enables a 7-DOF robotic arm to accurately grasp and articulate objects by combining:
 
@@ -22,24 +22,6 @@ Modern robotic manipulation demands both perceptual intelligence and precise con
    Instead of following a fixed open‑loop path, MPC generates multiple candidate action sequences over a short horizon (e.g., 15 steps). Each sequence is simulated in a copy of the environment to forecast the resulting forces and hinge motions. By evaluating a cost function that heavily penalizes large force/torque norms, the controller selects the safest and most stable trajectory at runtime. This leads to smoother pulls with fewer jerks or spikes.
 
 Together, these components enable the robot to autonomously detect, grasp, and pull a door handle with high precision while minimizing the risk of damage or jamming.
-
----
-
-## Repository Structure
-
-```text
-.
-├── README.md            # Project overview, setup, and usage (this file)
-├── requirements.txt     # Python dependencies
-├── .gitignore           # Ignored files and folders
-├── mujoco_5.py          # Main pipeline: segmentation → sensing → MPC fileciteturn0file0
-├── segmentations/       # Saved segmentation masks
-│   ├── seg_0000.png     # Frame 0 mask
-│   ├── seg_0001.png     # Frame 1 mask
-│   └── ...
-└── scripts/             # Helper scripts
-    └── run.sh           # Convenience launcher
-```
 
 ---
 
@@ -72,43 +54,20 @@ Together, these components enable the robot to autonomously detect, grasp, and p
    * Download MuJoCo (e.g., v2.3.4) and extract to `$HOME/.mujoco/mujoco210`.
    * Add to your environment:
 
-     ```bash
-     export MUJOCO_HOME=$HOME/.mujoco/mujoco210
-     export LD_LIBRARY_PATH=$MUJOCO_HOME/bin:$LD_LIBRARY_PATH
-     ```
+   ```bash
+   export MUJOCO_HOME=$HOME/.mujoco/mujoco210
+   export LD_LIBRARY_PATH=$MUJOCO_HOME/bin:$LD_LIBRARY_PATH
+   ```
 
 5. **Rendering Drivers**
 
    * On Ubuntu:
 
-     ```bash
-     sudo apt-get install libglfw3 libglfw3-dev libglew-dev
-     ```
+   ```bash
+   sudo apt-get install libglfw3 libglfw3-dev libglew-dev
+   ```
 
 ---
-
-## Running Locally
-
-### Using the helper script
-
-```bash
-bash scripts/run.sh --env-name Door \
-                   --robot Panda \
-                   --seg-level instance \
-                   --max-steps 2000
-```
-
-### Direct invocation
-
-```bash
-python mujoco_5.py \
-  --env-name Door \
-  --robot Panda \
-  --camera robot0_eye_in_hand \
-  --seg-level element \
-  --freq 20 \
-  --max-steps 2000
-```
 
 * **Segmentation outputs** → `./segmentations/seg_{frame:04d}.png`
 * **Logging** → hinge angle and “|F|” / “|T|” norms printed every 150 steps.
